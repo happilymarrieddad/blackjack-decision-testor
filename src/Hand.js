@@ -11,11 +11,13 @@ class Hand {
 		return new Hand(options)
 	}
 
-	init(shoot,f_card = null,s_card) {
+	init(shoot,f_card = null,s_card = null) {
 		this.clear()
+		if (!f_card) f_card = shoot.getCard()
+		if (!s_card) s_card = shoot.getCard()
 
-		this.addCard(f_card || shoot.getCard())
-		this.addCard(s_card || shoot.getCard())
+		this.addCard(f_card)
+		this.addCard(s_card)
 	}
 
 	clear() {

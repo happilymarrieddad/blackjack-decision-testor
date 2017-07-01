@@ -1,4 +1,4 @@
-
+let HandFactory = require('./hand.js')
 
 class Dealer {
 	constructor(options = {}) {
@@ -10,36 +10,48 @@ class Dealer {
 		return new Dealer(options)
 	}
 
-	initHand() {
+	initHand(shoot) {
 		let self = this
 
 		console.log(`Initializing dealer's hand`)
 		return new Promise((resolve,reject) => {
 			self.clearHand()
-			
 
+			self.clearHand()
+			let hand = HandFactory.create()
+			hand.init(shoot)
+			self.setHand(hand)
 			return resolve()
 		})
+	}
+
+	setHand(hand) {
+		this._hand = hand
+	}
+
+	getHand() {
+		return this._hand
 	}
 
 	clearHand() {
 		this._hand = null
 	}
 
-	playHand(shoot,hand,index) {
+	playHand(shoot) {
 		let self = this
 
+		let hand = self.getHand()
+		console.log('Play dealer\'s hand')
 		return new Promise((resolve,reject) => {
 			async function run() {
-				console.log('Player dealer\'s hand')
 				let cont = true
 				
 				while(cont) {
 					console.log('Making a decision from cards')
 					hand.display()
-					let decision = await self.makeDecision(hand)
+					let decision = await self.makeDecision(hand).catch(err => { console.log('Error in Dealer.playHand.makeDecision');throw new Error(err) })
 					console.log(`Decision:`,decision)
-					cont = self.shouldContinue(decision,shoot,index,hand)
+					cont = self.shouldContinue(decision,shoot,hand)
 					console.log(`Are we going to continue?`,cont)
 				}
 
@@ -59,7 +71,7 @@ class Dealer {
 		})
 	}
 
-	shouldContinue(decision,shoot,index,hand) {
+	shouldContinue(decision,shoot,hand) {
 		let self = this
 
 		if (decision == 'Stand') return false

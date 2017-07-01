@@ -30,11 +30,15 @@ class Player {
 		return this._hands
 	}
 
+	getFunds() {
+		return this._funds
+	}
+
 	initHand(shoot) {
 		let self = this
 		self._bet = self._initial_bet
 
-		console.log(`Initializing player ${ self.getNumber() }'s hand.`)
+		console.log(`Initializing player ${ self.getNumber() }'s hand. Player is starting with`,self.getFunds(),`funds.`)
 		return new Promise((resolve,reject) => {
 			if (self._funds < 1) {
 				console.log(`Player ${ self.getNumber() } is out of money.`)
@@ -136,6 +140,19 @@ class Player {
 
 		console.log(`Invalid decision encountered`,decision)
 		return false;
+	}
+
+	compareAllHands(dealers_hand) {
+		let self = this
+
+		return new Promise((resolve,reject) => {
+
+			return resolve()
+		})
+	}
+
+	compareHand(dealers_hand) {
+
 	}
 
 }

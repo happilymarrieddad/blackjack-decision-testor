@@ -58,16 +58,16 @@ class Game {
 			async function run() {
 				// Initialize each players hand
 				await Promise.all(self.getPlayers().map(async player => await player.initHand(self.getShoot())))
-				self.getDealer().initHand()
+				await self.getDealer().initHand(self.getShoot())
 
 				// Play each players hand
 				for (const index in self._players) {
 					let player = self._players[index]
-					const res = await player.playHands(self.getShoot()).catch(err => { throw new Error(err) })
+					const res = await player.playHands(self.getShoot()).catch(err => { console.log('Error in Player.playHands');throw new Error(err) })
 				}
 
 				// Play dealers hand
-				const dealer_res = await self.getDealer().playHand(self.getShoot()).catch(err => { throw new Error(err) })
+				const dealer_res = await self.getDealer().playHand(self.getShoot()).catch(err => { console.log('Error in Dealer.playHand');throw new Error(err) })
 
 				// Compare dealers hand with player's hand(s)
 				for (const index in self._players) {

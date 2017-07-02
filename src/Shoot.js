@@ -16,7 +16,7 @@ class Shoot {
 		let self = this
 		self._decks = []
 		let len = self.getNumDecks()
-		console.log('Building shoot with',len,'deck(s)')
+		//console.log('Building shoot with',len,'deck(s)')
 		for (let i = 0; i < len; i++) {
 			self._decks = self._decks.concat(DeckFactory.create().getCards())
 		}
@@ -32,7 +32,7 @@ class Shoot {
 	}
 
 	shuffle() {
-		console.log('Shuffling shoot')
+		//console.log('Shuffling shoot')
 	    for (let i = this._decks.length; i; i--) {
 	        let j = Math.floor(Math.random() * i);
 	        [this._decks[i - 1], this._decks[j]] = [this._decks[j], this._decks[i - 1]];
@@ -40,7 +40,7 @@ class Shoot {
 	}
 
 	check() {
-		console.log('Checking to see if shoot needs to be rebuilt and shuffled')
+		//console.log('Checking to see if shoot needs to be rebuilt and shuffled')
 		if (this.getTotalNumCards() * RESHUFFLE_PERCENTAGE > this._decks.length) this.init()
 	}
 

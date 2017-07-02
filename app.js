@@ -1,4 +1,4 @@
-let NUM_OF_ROUNDS = 1
+let NUM_OF_ROUNDS = 1000
 let NUM_OF_PLAYERS = 1
 
 let GameFactory = require('./src/Game.js')

@@ -20,7 +20,7 @@ class Game {
 		let self = this
 
 		return new Promise((resolve,reject) => {
-			console.log('Game initialized.')
+			//console.log('Game initialized.')
 			return resolve()
 		})
 	}
@@ -63,15 +63,22 @@ class Game {
 				// Play each players hand
 				for (const index in self._players) {
 					let player = self._players[index]
-					const res = await player.playHands(self.getShoot()).catch(err => { console.log('Error in Player.playHands');throw new Error(err) })
+					const res = await player.playHands(self.getShoot(),self.getDealer().getHand().getCards())
+						.catch(err => { console.log('Error in Player.playHands');throw new Error(err) })
 				}
 
 				// Play dealers hand
-				const dealer_res = await self.getDealer().playHand(self.getShoot()).catch(err => { console.log('Error in Dealer.playHand');throw new Error(err) })
+				const dealer_res = await self.getDealer()
+					.playHand(self.getShoot())
+					.catch(err => { console.log('Error in Dealer.playHand');throw new Error(err) })
 
 				// Compare dealers hand with player's hand(s)
 				for (const index in self._players) {
 					let player = self._players[index]
+					await player.compareAllHands(self.getDealer().getHand())
+						.catch(err => { console.log('Error in Player.compareAllHands');throw new Error(err) })
+
+					player.displayFunds()
 				}
 
 				return {}

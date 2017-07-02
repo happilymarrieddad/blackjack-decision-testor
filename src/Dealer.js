@@ -1,5 +1,10 @@
 let HandFactory = require('./hand.js')
 
+let STAND = 'Stand'
+let HIT = 'Hit'
+let SPLIT = 'Split'
+let DOUBLEDOW = 'Double Down'
+
 class Dealer {
 	constructor(options = {}) {
 		this._hand = null
@@ -13,13 +18,14 @@ class Dealer {
 	initHand(shoot) {
 		let self = this
 
-		console.log(`Initializing dealer's hand`)
+		//console.log(`Initializing dealer's hand`)
 		return new Promise((resolve,reject) => {
 			self.clearHand()
 
 			self.clearHand()
 			let hand = HandFactory.create()
 			hand.init(shoot)
+			hand.sort()
 			self.setHand(hand)
 			return resolve()
 		})
@@ -41,21 +47,20 @@ class Dealer {
 		let self = this
 
 		let hand = self.getHand()
-		console.log('Play dealer\'s hand')
+		//console.log('Play dealer\'s hand')
 		return new Promise((resolve,reject) => {
 			async function run() {
 				let cont = true
 				
 				while(cont) {
-					console.log('Making a decision from cards')
-					hand.display()
+					//hand.display()
 					let decision = await self.makeDecision(hand).catch(err => { console.log('Error in Dealer.playHand.makeDecision');throw new Error(err) })
-					console.log(`Decision:`,decision)
+					//console.log(`Decision:`,decision)
 					cont = self.shouldContinue(decision,shoot,hand)
-					console.log(`Are we going to continue?`,cont)
+					//console.log(`Are we going to continue?`,cont)
 				}
 
-				return {}	
+				return {}
 			}
 
 			run().then(resolve).catch(reject)
@@ -66,8 +71,9 @@ class Dealer {
 		let self = this
 
 		return new Promise((resolve,reject) => {
-
-			return resolve('Stand')
+			let value = hand.getValue()
+			if (+value < 17) return resolve(HIT)
+			return resolve(STAND)
 		})
 	}
 
@@ -76,28 +82,10 @@ class Dealer {
 
 		if (decision == 'Stand') return false
 		if (decision == 'Hit') {
-			let hand = HandFactory.create()
-			hand.init(shoot)
-			self._hands.push(hand)
+			let card = shoot.getCard()
+			self._hand.addCard(card)
 			return true
 		}
-		// if (decision == 'Split') {
-		// 	let [first_card,second_card] = hand
-		// 	hand.clear()
-		// 	hand.addCard(first_card)
-		// 	hand.addCard(shoot.getCard())
-
-		// 	let new_hand = HandFactory.create()
-		// 	new_hand.init(shoot,second_card)
-		// 	self._hands.push(new_hand)
-		// 	return true
-		// }
-		// if (decision == 'Double Down') {
-		// 	hand.addCard(first_card)
-		// 	self._funds -= self._bet
-		// 	self._bet *= 2
-		// 	return false
-		// }
 
 		console.log(`Invalid decision encountered`,decision)
 		return false;

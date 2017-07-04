@@ -104,12 +104,18 @@ class Player {
 					const res = await self.compareHand(dealers_hand,hand).catch(err => { throw new Error(err) })
 					//console.log('Comparing hands result:',res)
 					if (res == WIN) {
+						hand.setWin(true)
 						self.adjustFunds(hand.getBet())
 					} else if (res == WIN_WITH_BLACKJACK) {
+						hand.setWin(true)
 						self.adjustFunds(hand.getBet() * 1.5)
 					} else if (res == LOSS) {
+						hand.setWin(false)
 						self.adjustFunds(-hand.getBet())
 					}
+
+					const db = await hand.saveToDb()
+
 					hand_index++
 				} while(hand_index < self._hands.length)
 

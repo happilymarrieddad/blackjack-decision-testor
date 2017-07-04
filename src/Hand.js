@@ -6,6 +6,10 @@ class Hand {
 	constructor(options = {}) {
 		this._cards = []
 		this._bet = options.bet || 5
+
+		this._prop = null
+		this._dealer_card = null
+		this._win = 0
 	}
 
 	static create(options = {}) {
@@ -21,6 +25,30 @@ class Hand {
 		this.addCard(f_card)
 		this.addCard(s_card)
 		this.sort()
+	}
+
+	setProp(prop) {
+		this._prop = prop
+	}
+
+	setDealerCard(dealerCard) {
+		this._dealer_card = dealerCard
+	}
+
+	setWin(win) {
+		this._win = win ? 1 : 0
+	}
+
+	saveToDb() {
+		let self = this
+
+		return new Promise((resolve,reject) => {
+			let post = {
+				
+			}
+
+			return resolve()
+		})
 	}
 
 	adjustBet(val) {

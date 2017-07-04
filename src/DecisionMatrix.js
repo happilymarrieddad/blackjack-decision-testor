@@ -32,6 +32,9 @@ class DecisionMatrix {
 		}
 
 		let prop = `${ first.display() },${ second.display() }`
+
+		hand.setProp(prop)
+		hand.setDealerCard(dealerUpCard.display())
 		
 		if (matrix[index][prop]) {
 			return matrix[index][prop][dealerUpCard.display()]

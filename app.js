@@ -1,11 +1,6 @@
 let NUM_OF_ROUNDS = 10000
 let NUM_OF_PLAYERS = 1
 
-let mysql = require('mysql')
-let config = require('./config.json')
-
-let pool = mysql.createPool(config.db)
-
 let GameFactory = require('./src/Game.js')
 let Game = GameFactory.create({
 	numOfPlayers:NUM_OF_PLAYERS

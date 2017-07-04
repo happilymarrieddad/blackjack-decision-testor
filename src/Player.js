@@ -228,14 +228,14 @@ class Player {
 			// Check blackjacks
 			const dealerHasBlackjack = dealers_hand.hasBlackJack()
 			const playerHasBlackjack = hand.hasBlackJack()
-			hand.setNote(`DealerBJ = ${ dealerHasBlackjack }`)
-			hand.addToNote(`PlayerBJ = ${ playerHasBlackjack }`)
+			//hand.setNote(`DealerBJ = ${ dealerHasBlackjack }`)
+			//hand.addToNote(`PlayerBJ = ${ playerHasBlackjack }`)
 			if (dealerHasBlackjack) {
 				if (playerHasBlackjack) {
-					hand.addToNote(`Hand Result = ${ PUSH }`)
+					//hand.addToNote(`Hand Result = ${ PUSH }`)
 					return resolve(PUSH)
 				}
-				hand.addToNote(`Hand Result = ${ LOSS }`)
+				//hand.addToNote(`Hand Result = ${ LOSS }`)
 				return resolve(LOSS)
 			}
 

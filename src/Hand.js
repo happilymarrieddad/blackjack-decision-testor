@@ -1,3 +1,8 @@
+let mysql = require('mysql')
+let config = require('../config.json')
+
+let pool = mysql.createPool(config.db)
+
 let logNoNewLine = function(msg) {
 	process.stdout.write(msg)
 }
@@ -10,6 +15,7 @@ class Hand {
 		this._prop = null
 		this._dealer_card = null
 		this._win = 0
+		this._note = ''
 	}
 
 	static create(options = {}) {
@@ -27,6 +33,18 @@ class Hand {
 		this.sort()
 	}
 
+	setNote(msg) {
+		this._note = msg
+	}
+
+	addToNote(msg) {
+		this._note += ' | ' + msg
+	}
+
+	getNote() {
+		return this._note
+	}
+
 	setProp(prop) {
 		this._prop = prop
 	}
@@ -36,7 +54,19 @@ class Hand {
 	}
 
 	setWin(win) {
-		this._win = win ? 1 : 0
+		this._win = win || 0
+	}
+
+	getProp() {
+		return this._prop
+	}
+
+	getDealerCard() {
+		return this._dealer_card
+	}
+
+	getWin() {
+		return this._win
 	}
 
 	saveToDb() {
@@ -44,10 +74,18 @@ class Hand {
 
 		return new Promise((resolve,reject) => {
 			let post = {
-				
+				prop:self.getProp(),
+				dealer_card:self.getDealerCard(),
+				win:self.getWin(),
+				note:self.getNote()
 			}
 
-			return resolve()
+			let qry = `INSERT INTO decision_info SET ?`
+			pool.query(qry,post,(err,rows) => {
+				if (err) return reject(err)
+				return resolve()
+			})
+
 		})
 	}
 
@@ -111,7 +149,7 @@ class Hand {
 			let firstCard = this._cards[0]
 			let lastCard = this._cards[1]
 			if (firstCard.display() == 'A' || lastCard.display() == 'A') {
-				if (+lastCard.value() == 10 || +lastCard.value() == 10) {
+				if (['10','J','Q','K'].includes(lastCard.value().toString())) {
 					return true
 				}
 			}

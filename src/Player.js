@@ -103,15 +103,17 @@ class Player {
 					let hand = self.getHands()[hand_index]
 					const res = await self.compareHand(dealers_hand,hand).catch(err => { throw new Error(err) })
 					//console.log('Comparing hands result:',res)
+					hand.setWin(1)
 					if (res == WIN) {
-						hand.setWin(true)
 						self.adjustFunds(hand.getBet())
 					} else if (res == WIN_WITH_BLACKJACK) {
-						hand.setWin(true)
 						self.adjustFunds(hand.getBet() * 1.5)
 					} else if (res == LOSS) {
-						hand.setWin(false)
+						hand.setWin(0)
 						self.adjustFunds(-hand.getBet())
+					} else {
+						// Push
+						hand.setWin(2)
 					}
 
 					const db = await hand.saveToDb()
@@ -226,8 +228,14 @@ class Player {
 			// Check blackjacks
 			const dealerHasBlackjack = dealers_hand.hasBlackJack()
 			const playerHasBlackjack = hand.hasBlackJack()
+			hand.setNote(`DealerBJ = ${ dealerHasBlackjack }`)
+			hand.addToNote(`PlayerBJ = ${ playerHasBlackjack }`)
 			if (dealerHasBlackjack) {
-				if (playerHasBlackjack) return resolve(PUSH)
+				if (playerHasBlackjack) {
+					hand.addToNote(`Hand Result = ${ PUSH }`)
+					return resolve(PUSH)
+				}
+				hand.addToNote(`Hand Result = ${ LOSS }`)
 				return resolve(LOSS)
 			}
 

@@ -18,7 +18,7 @@ class Player {
 		this._hands = []
 		this._initial_bet = options.bet || 5
 		this._bet = this._initial_bet
-		this._initial_money = options.initialMoney || 500
+		this._initial_money = 50000000 || options.initialMoney || 500
 		this._funds = this._initial_money
 		this._playsRounds = true
 		this._matrixIndex = 0
@@ -39,6 +39,10 @@ class Player {
 			let dealerFaceupCard = dealerCards[0]
 
 			let decision = this._matrix.decide(this._matrixIndex,hand,dealerFaceupCard)
+			if (decision == SPLIT) {
+				hand.setSplit(1)
+			}
+			hand.addToNote(`Decision - ${ decision }`)
 
 			return resolve(decision)
 		})
@@ -162,10 +166,10 @@ class Player {
 
 		//console.log(`Initializing player ${ self.getNumber() }'s hand. Player is starting with`,self.getFunds(),`funds.`)
 		return new Promise((resolve,reject) => {
-			// if (self._funds < 1) {
-			// 	console.log(`Player ${ self.getNumber() } is out of money.`)
-			// 	return resolve({})
-			// }
+			if (self._funds < 1) {
+				console.log(`Player ${ self.getNumber() } is out of money.`)
+				return resolve({})
+			}
 
 			self.clearHands()
 			let hand = HandFactory.create()
@@ -191,13 +195,18 @@ class Player {
 		}
 		if (decision == 'Split') {
 			let [first_card,second_card] = hand.getCards()
+			let originalHand = `${ first_card.display() },${ second_card.display()}`
 			hand.clear()
 			hand.addCard(first_card)
 			hand.addCard(shoot.getCard())
+			hand.setSplit(1)
+			hand.setOriginalHand(originalHand)
 			hand.sort()
 
 			let new_hand = HandFactory.create()
 			new_hand.init(shoot,second_card)
+			new_hand.setSplit(1)
+			new_hand.setOriginalHand(originalHand)
 			self._hands.push(new_hand)
 			return DO_CONTINUE
 		}
@@ -220,22 +229,34 @@ class Player {
 			const playerCards = hand.getCards()
 			const dealersCards = dealers_hand.getCards()
 
-			console.log('Comparing dealer hand')
-			dealers_hand.display()
-			console.log('to player')
-			hand.display()
+			// console.log('Comparing dealer hand')
+			// dealers_hand.display()
+			// console.log('to player')
+			// hand.display()
 
 			// Check blackjacks
 			const dealerHasBlackjack = dealers_hand.hasBlackJack()
 			const playerHasBlackjack = hand.hasBlackJack()
-			//hand.setNote(`DealerBJ = ${ dealerHasBlackjack }`)
-			//hand.addToNote(`PlayerBJ = ${ playerHasBlackjack }`)
+			let player_card_display = ''
+			for (let i = 0; i < playerCards.length; i++) {
+				if (i) player_card_display += ','
+				player_card_display += playerCards[i].display()
+			}
+			let dealer_card_display = ''
+			for (let i = 0; i < dealersCards.length; i++) {
+				if (i) dealer_card_display += ','
+				dealer_card_display += dealersCards[i].display()
+			}
+			hand.addToNote(`DealerBJ = ${ dealerHasBlackjack }`)
+			hand.addToNote(`PlayerBJ = ${ playerHasBlackjack }`)
+			hand.addToNote(`Player Cards = ${ player_card_display }`)
+			hand.addToNote(`Dealer Cards = ${ dealer_card_display }`)
 			if (dealerHasBlackjack) {
 				if (playerHasBlackjack) {
-					//hand.addToNote(`Hand Result = ${ PUSH }`)
+					hand.addToNote(`Hand Result = ${ PUSH }`)
 					return resolve(PUSH)
 				}
-				//hand.addToNote(`Hand Result = ${ LOSS }`)
+				hand.addToNote(`Hand Result = ${ LOSS }`)
 				return resolve(LOSS)
 			}
 

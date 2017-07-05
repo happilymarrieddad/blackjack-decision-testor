@@ -19,7 +19,9 @@ exports.up = function(db) {
 		id: { type: "int", primaryKey:true, autoIncrement: true, notNull: true },
 		prop: { type: "string", length: 10, notNull: true },
 		dealer_card: { type: "string", length: 10, notNull: true },
+    original_hand: { type: "string", length: 100,defaultValue:'' },
 		win: { type:'smallint',length:1,defaultValue:0 },
+    was_split: { type:'smallint',length:1,defaultValue:0 },
     note: { type:'string',length:1000,defaultValue:'' }
 	})
 };

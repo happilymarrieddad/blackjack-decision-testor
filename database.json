@@ -3,7 +3,7 @@
 	    "host": "localhost",
 	    "user": "root",
 	    "password" : "wurger12",
-	    "database": "blackjack",
+	    "database": "blackjack2",
 	    "driver": "mysql",
 	    "multipleStatements": true
   	}

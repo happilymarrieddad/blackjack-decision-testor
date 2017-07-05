@@ -52,7 +52,7 @@ class Game {
 		let self = this
 		self.checkShoot()
 
-		console.log('Playing round',round)
+		console.log('Playing round',round.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 		return new Promise((resolve,reject) => {
 			
 			async function run() {
@@ -78,7 +78,7 @@ class Game {
 					await player.compareAllHands(self.getDealer().getHand())
 						.catch(err => { console.log('Error in Player.compareAllHands');throw new Error(err) })
 
-					player.displayFunds()
+					//player.displayFunds()
 				}
 
 				return {}

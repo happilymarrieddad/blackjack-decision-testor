@@ -15,7 +15,9 @@ class Hand {
 		this._prop = null
 		this._dealer_card = null
 		this._win = 0
-		this._note = ''
+		this._note = 'Starting Hand'
+		this._was_split = 0
+		this._original_hand = ''
 	}
 
 	static create(options = {}) {
@@ -31,6 +33,22 @@ class Hand {
 		this.addCard(f_card)
 		this.addCard(s_card)
 		this.sort()
+	}
+
+	setOriginalHand(val) {
+		this._original_hand = val
+	}
+
+	getOriginalHand() {
+		return this._original_hand
+	}
+
+	setSplit(val) {
+		this._was_split = val ? 1 : 0
+	}
+
+	getSplit() {
+		return this._was_split
 	}
 
 	setNote(msg) {
@@ -77,8 +95,12 @@ class Hand {
 				prop:self.getProp(),
 				dealer_card:self.getDealerCard(),
 				win:self.getWin(),
-				note:self.getNote()
+				note:self.getNote(),
+				was_split:self.getSplit(),
+				original_hand:self.getOriginalHand()
 			}
+			// No need to store decision if it's a push... who cares
+			if (+post.win == 2) return resolve()
 
 			let qry = `INSERT INTO decision_info SET ?`
 			pool.query(qry,post,(err,rows) => {
